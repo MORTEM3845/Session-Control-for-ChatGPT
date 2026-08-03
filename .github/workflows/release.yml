@@ -4,17 +4,28 @@ on:
   push:
     tags:
       - "v*"
+  pull_request:
     branches:
       - main
     paths:
       - "release-trigger.txt"
+    types:
+      - opened
+      - synchronize
+      - reopened
   workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag, for example v0.2.0"
+        required: true
+        default: "v0.2.0"
 
 permissions:
   contents: write
 
 jobs:
   build:
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -24,13 +35,15 @@ jobs:
 
       - name: Resolve release tag
         shell: pwsh
+        env:
+          MANUAL_TAG: ${{ inputs.tag }}
         run: |
           $tag = if ($env:GITHUB_REF_TYPE -eq "tag") {
             $env:GITHUB_REF_NAME
           } elseif (Test-Path "release-trigger.txt") {
             (Get-Content "release-trigger.txt" -Raw).Trim()
           } else {
-            throw "Release tag was not provided"
+            $env:MANUAL_TAG
           }
 
           if ($tag -notmatch '^v\d+\.\d+\.\d+$') { throw "Invalid release tag: $tag" }
