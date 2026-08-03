@@ -1,7 +1,3 @@
 # Session Control for ChatGPT
 
-Неофициальное расширение Chrome для работы с несколькими параллельными чатами ChatGPT из одной боковой панели.
-
-> Проект не связан с OpenAI и не одобрен OpenAI. ChatGPT является товарным знаком OpenAI.
-
-Проект и документация загружаются в этот репозиторий.
+Project bootstrap is being restored by GitHub Actions.
