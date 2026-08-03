@@ -1,0 +1,17 @@
+# Build outputs
+artifacts/
+*.zip
+*.exe
+*.crx
+*.pem
+
+# IDE / OS
+.vscode/
+.idea/
+.vs/
+.DS_Store
+Thumbs.db
+
+# Node
+node_modules/
+npm-debug.log*

@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Session Control for ChatGPT</title>
+  <link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+  <header class="app-header">
+    <div>
+      <div class="eyebrow">CHATGPT WORKSPACE</div>
+      <h1>Session Control</h1>
+    </div>
+    <button id="refreshButton" class="icon-button" type="button" title="Обновить состояния" aria-label="Обновить состояния">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.34 5.66M20 4v7h-7"/></svg>
+    </button>
+  </header>
+
+  <section id="stats" class="stats" aria-label="Сводка по вкладкам"></section>
+
+  <section class="controls">
+    <label class="search-box">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+      <input id="searchInput" type="search" autocomplete="off" placeholder="Найти чат, модель или текст…">
+    </label>
+
+    <div id="filters" class="filters" aria-label="Фильтр состояний">
+      <button class="filter active" type="button" data-filter="all">Все</button>
+      <button class="filter" type="button" data-filter="running">В работе</button>
+      <button class="filter" type="button" data-filter="unread">Непрочитанные</button>
+      <button class="filter" type="button" data-filter="waiting">Ждут меня</button>
+      <button class="filter" type="button" data-filter="failed">Проблемы</button>
+    </div>
+  </section>
+
+  <main>
+    <section id="sessionList" class="session-list" aria-live="polite"></section>
+    <section id="emptyState" class="empty-state" hidden>
+      <div class="empty-icon">◇</div>
+      <h2>Подходящих чатов нет</h2>
+      <p>Откройте ChatGPT или измените фильтр.</p>
+      <button id="openChatGptButton" class="primary-button" type="button">Открыть ChatGPT</button>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-actions">
+      <button id="groupTabsButton" class="secondary-button" type="button">Сгруппировать вкладки</button>
+      <button id="closeDuplicatesButton" class="secondary-button" type="button">Закрыть дубли</button>
+    </div>
+
+    <label class="toggle-row">
+      <span><strong>Уведомления</strong><small>Сообщать о готовых ответах</small></span>
+      <input id="notificationsToggle" type="checkbox"><i aria-hidden="true"></i>
+    </label>
+
+    <label class="toggle-row">
+      <span><strong>Фрагменты сообщений</strong><small>Хранить локально; выключено по умолчанию</small></span>
+      <input id="snippetsToggle" type="checkbox"><i aria-hidden="true"></i>
+    </label>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  </footer>
+
+  <script src="sidepanel.js"></script>
+</body>
+</html>
