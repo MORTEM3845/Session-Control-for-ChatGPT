@@ -5,7 +5,9 @@ on:
     tags:
       - "v*"
     branches:
-      - "release/v*"
+      - main
+    paths:
+      - "release-trigger.txt"
   workflow_dispatch:
 
 permissions:
@@ -25,9 +27,12 @@ jobs:
         run: |
           $tag = if ($env:GITHUB_REF_TYPE -eq "tag") {
             $env:GITHUB_REF_NAME
+          } elseif (Test-Path "release-trigger.txt") {
+            (Get-Content "release-trigger.txt" -Raw).Trim()
           } else {
-            $env:GITHUB_REF_NAME -replace '^release/', ''
+            throw "Release tag was not provided"
           }
+
           if ($tag -notmatch '^v\d+\.\d+\.\d+$') { throw "Invalid release tag: $tag" }
           "RELEASE_TAG=$tag" >> $env:GITHUB_ENV
 
