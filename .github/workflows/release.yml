@@ -61,8 +61,11 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          $assets = @(Get-ChildItem artifacts -File | ForEach-Object { $_.FullName })
+          if ($assets.Count -lt 3) { throw "Expected ZIP, EXE and SHA256SUMS.txt" }
+
           if (gh release view "$env:RELEASE_TAG" 2>$null) {
-            gh release upload "$env:RELEASE_TAG" artifacts\* --clobber
+            gh release upload "$env:RELEASE_TAG" @assets --clobber
           } else {
-            gh release create "$env:RELEASE_TAG" artifacts\* --generate-notes --title "$env:RELEASE_TAG" --target main
+            gh release create "$env:RELEASE_TAG" @assets --generate-notes --title "$env:RELEASE_TAG" --target main
           }
