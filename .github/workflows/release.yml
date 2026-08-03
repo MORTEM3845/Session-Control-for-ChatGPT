@@ -4,6 +4,9 @@ on:
   push:
     tags:
       - "v*"
+    branches:
+      - "release/v*"
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -16,13 +19,25 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+
+      - name: Resolve release tag
+        shell: pwsh
+        run: |
+          $tag = if ($env:GITHUB_REF_TYPE -eq "tag") {
+            $env:GITHUB_REF_NAME
+          } else {
+            $env:GITHUB_REF_NAME -replace '^release/', ''
+          }
+          if ($tag -notmatch '^v\d+\.\d+\.\d+$') { throw "Invalid release tag: $tag" }
+          "RELEASE_TAG=$tag" >> $env:GITHUB_ENV
+
       - run: npm test
 
       - name: Package extension
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force artifacts | Out-Null
-          Compress-Archive -Path extension\* -DestinationPath "artifacts\Session-Control-for-ChatGPT-$env:GITHUB_REF_NAME.zip"
+          Compress-Archive -Path extension\* -DestinationPath "artifacts\Session-Control-for-ChatGPT-$env:RELEASE_TAG.zip"
 
       - name: Build Windows installer
         shell: pwsh
@@ -46,4 +61,8 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "$env:GITHUB_REF_NAME" artifacts\* --generate-notes --title "$env:GITHUB_REF_NAME"
+          if (gh release view "$env:RELEASE_TAG" 2>$null) {
+            gh release upload "$env:RELEASE_TAG" artifacts\* --clobber
+          } else {
+            gh release create "$env:RELEASE_TAG" artifacts\* --generate-notes --title "$env:RELEASE_TAG" --target main
+          }
