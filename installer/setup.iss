@@ -85,9 +85,3 @@ procedure InitializeWizard;
 begin
   ChromePath := ResolveChromePath;
 end;
-
-procedure CurStepChanged(CurStep: TSetupStep);
-begin
-  if CurStep = ssPostInstall then
-    SetClipboardText(ExpandConstant('{app}\extension'));
-end;
